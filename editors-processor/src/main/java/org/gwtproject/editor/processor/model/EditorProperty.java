@@ -243,7 +243,7 @@ public class EditorProperty {
         if (!foundGetterForPart) {
           //        poison(noGetterMessage(path, proxyType));
           //          return;
-          throw new IllegalStateException("!foundGetterForPart");
+          throw new IllegalStateException("!foundGetterForPart on path: " + path);
         }
       }
 
