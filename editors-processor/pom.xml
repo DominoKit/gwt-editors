@@ -16,7 +16,6 @@
         <auto.common.version>0.10</auto.common.version>
         <auto.service.version>1.0-rc6</auto.service.version>
         <compile-testing.version>0.18</compile-testing.version>
-        <domino.version>1.0-SNAPSHOT</domino.version>
         <javapoet.version>1.12.1</javapoet.version>
         <compile.testing.version>0.18</compile.testing.version>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
@@ -112,33 +111,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <artifactSet>-->
-<!--                                <excludes>-->
-<!--                                    &lt;!&ndash; exclude dependencies you don't want to bundle in your processor &ndash;&gt;-->
-<!--                                </excludes>-->
-<!--                            </artifactSet>-->
-<!--                            <relocations>-->
-<!--                                <relocation>-->
-<!--                                    <pattern>com.google.auto.common</pattern>-->
-<!--                                    <shadedPattern>your.processor.shaded.auto.common</shadedPattern>-->
-<!--                                </relocation>-->
-<!--                            </relocations>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
 </project>
