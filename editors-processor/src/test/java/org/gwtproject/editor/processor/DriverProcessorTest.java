@@ -143,4 +143,58 @@ public class DriverProcessorTest {
             JavaFileObjects.forResource(
                 "org/gwtproject/editor/processor/test04/result/TestEditor04_phone_Context.java"));
   }
+
+  @Test
+  void testEditor05() {
+    Compilation compilation =
+        javac()
+            .withProcessors(new DriverProcessor())
+            .compile(
+                Arrays.asList(
+                    JavaFileObjects.forResource(
+                        "org/gwtproject/editor/processor/test05/TestEditor05.java")));
+    CompilationSubject.assertThat(compilation).succeeded();
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test05/TestEditor05_Driver_Impl")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test05/result/TestEditor05_Driver_Impl.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test05/TestEditor05_email_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test05/result/TestEditor05_email_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test05/TestEditor05_name_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test05/result/TestEditor05_name_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test05/TestEditor05_id_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test05/result/TestEditor05_id_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test05/TestEditor05_phone_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test05/result/TestEditor05_phone_Context.java"));
+  }
+
+  @Test
+  void testEditor06() {
+    Compilation compilation =
+        javac()
+            .withProcessors(new DriverProcessor())
+            .compile(
+                Arrays.asList(
+                    JavaFileObjects.forResource(
+                        "org/gwtproject/editor/processor/test06/TestEditor06.java")));
+    CompilationSubject.assertThat(compilation).succeeded();
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test06/TestEditor06_email_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test06/result/TestEditor06_email_Context.java"));
+  }
 }

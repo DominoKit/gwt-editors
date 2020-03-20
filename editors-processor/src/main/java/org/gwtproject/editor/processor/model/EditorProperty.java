@@ -173,7 +173,7 @@ public class EditorProperty {
                 (TypeElement) types.getTypes().asElement(lookingAt),
                 types.getTypes(),
                 types.getElements())) {
-          BeanMethod which = BeanMethod.which(maybeSetter);
+          BeanMethod which = BeanMethod.which(types.getTypes(), maybeSetter);
           if (BeanMethod.CALL.equals(which)) {
             continue;
           }
@@ -222,7 +222,6 @@ public class EditorProperty {
                   // Handle the case of setFoo(int) vs. Editor<Integer>
                   if (setterParamType.getKind().isPrimitive()) {
                     // Replace the int with Integer
-
                     setterParamType =
                         types.getTypes().boxedClass((PrimitiveType) setterParamType).asType();
                   }
