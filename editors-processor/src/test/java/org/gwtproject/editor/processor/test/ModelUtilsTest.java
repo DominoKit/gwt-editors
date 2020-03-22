@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gwtproject.editor.processor;
+package org.gwtproject.editor.processor.test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +27,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import org.gwtproject.editor.processor.ModelUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

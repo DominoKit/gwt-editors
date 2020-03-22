@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gwtproject.editor.processor;
+package org.gwtproject.editor.processor.test;
 
 import static com.google.testing.compile.Compiler.javac;
 
@@ -21,12 +21,13 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
 import java.util.Arrays;
-import org.junit.jupiter.api.Test;
+import org.gwtproject.editor.processor.DriverProcessor;
+import org.junit.Test;
 
 public class DriverProcessorTest {
 
   @Test
-  void testEditor01() {
+  public void testEditor01() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -48,7 +49,7 @@ public class DriverProcessorTest {
   }
 
   @Test
-  void testEditor02() {
+  public void testEditor02() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -70,7 +71,7 @@ public class DriverProcessorTest {
   }
 
   @Test
-  void testEditor03() {
+  public void testEditor03() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -92,7 +93,7 @@ public class DriverProcessorTest {
   }
 
   @Test
-  void testEditor04() {
+  public void testEditor04() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -145,7 +146,7 @@ public class DriverProcessorTest {
   }
 
   @Test
-  void testEditor05() {
+  public void testEditor05() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -182,7 +183,7 @@ public class DriverProcessorTest {
   }
 
   @Test
-  void testEditor06() {
+  public void testEditor06() {
     Compilation compilation =
         javac()
             .withProcessors(new DriverProcessor())
@@ -196,5 +197,48 @@ public class DriverProcessorTest {
         .hasSourceEquivalentTo(
             JavaFileObjects.forResource(
                 "org/gwtproject/editor/processor/test06/result/TestEditor06_email_Context.java"));
+  }
+
+  @Test
+  public void testEditor07() {
+    Compilation compilation =
+        javac()
+            .withProcessors(new DriverProcessor())
+            .compile(
+                Arrays.asList(
+                    JavaFileObjects.forResource(
+                        "org/gwtproject/editor/processor/test07/TestEditor07.java")));
+    CompilationSubject.assertThat(compilation).succeeded();
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test07/TestEditor07_Driver_Impl")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_Driver_Impl.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test07/TestEditor07_email_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_email_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test07/TestEditor07_name_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_name_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test07/TestEditor07_id_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_id_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile("org/gwtproject/editor/processor/test07/TestEditor07_phone_Context")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_phone_Context.java"));
+    CompilationSubject.assertThat(compilation)
+        .generatedSourceFile(
+            "org/gwtproject/editor/processor/test07/TestEditor07_SimpleBeanEditorDelegate")
+        .hasSourceEquivalentTo(
+            JavaFileObjects.forResource(
+                "org/gwtproject/editor/processor/test07/result/TestEditor07_SimpleBeanEditorDelegate.java"));
   }
 }

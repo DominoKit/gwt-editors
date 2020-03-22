@@ -31,32 +31,26 @@ public class UserDto
     this.active    = active;
   }
   
-  @Override
   public Long getId() {
     return id;
   }
   
-  @Override
   public void setId(Long id) {
     this.id = id;
   }
   
-  @Override
   public String getEmail() {
     return email;
   }
   
-  @Override
   public void setEmail(String email) {
     this.email = email;
   }
   
-  @Override
   public String getFirstName() {
     return firstName;
   }
   
-  @Override
   public void setFirstName(String firstName) {
     this.firstName = firstName;
   }
@@ -70,7 +64,6 @@ public class UserDto
     this.lastName = lastName;
   }
   
-  @Override
   public int getAge() {
     return age;
   }
@@ -93,7 +86,6 @@ public class UserDto
     return active;
   }
   
-  @Override
   public void setActive(boolean active) {
     this.active = active;
   }
