@@ -31,11 +31,6 @@
             <artifactId>gwt-event</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.gwtproject.event</groupId>
-            <artifactId>gwt-event</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
