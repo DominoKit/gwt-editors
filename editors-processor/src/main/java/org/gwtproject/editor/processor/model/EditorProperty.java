@@ -15,22 +15,20 @@
  */
 package org.gwtproject.editor.processor.model;
 
-import com.google.auto.common.MoreTypes;
-import java.util.LinkedHashSet;
+import com.google.auto.common.MoreElements;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.ElementFilter;
 import org.gwtproject.editor.client.Editor;
 import org.gwtproject.editor.processor.ModelUtils;
 
@@ -170,15 +168,12 @@ public class EditorProperty {
         boolean lastPart = i == j - 1;
         boolean foundGetterForPart = false;
         TypeMirror owner = lookingAt;
-        LinkedHashSet<Element> members =
-            ModelUtils.getFlattenedSupertypeHierarchy(types.getTypes(), lookingAt)
-                .stream()
-                .map(MoreTypes::asElement)
-                .map(Element::getEnclosedElements)
-                .flatMap(List::stream)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        for (ExecutableElement maybeSetter : ElementFilter.methodsIn(members)) {
-          BeanMethod which = BeanMethod.which(maybeSetter);
+        for (ExecutableElement maybeSetter :
+            MoreElements.getLocalAndInheritedMethods(
+                (TypeElement) types.getTypes().asElement(lookingAt),
+                types.getTypes(),
+                types.getElements())) {
+          BeanMethod which = BeanMethod.which(types, maybeSetter);
           if (BeanMethod.CALL.equals(which)) {
             continue;
           }
@@ -227,7 +222,6 @@ public class EditorProperty {
                   // Handle the case of setFoo(int) vs. Editor<Integer>
                   if (setterParamType.getKind().isPrimitive()) {
                     // Replace the int with Integer
-
                     setterParamType =
                         types.getTypes().boxedClass((PrimitiveType) setterParamType).asType();
                   }
@@ -243,7 +237,8 @@ public class EditorProperty {
         if (!foundGetterForPart) {
           //        poison(noGetterMessage(path, proxyType));
           //          return;
-          throw new IllegalStateException("!foundGetterForPart");
+          throw new IllegalStateException(
+              "generation aborted! No getter exists for >>" + path + "<<");
         }
       }
 

@@ -16,7 +16,9 @@
 package org.gwtproject.editor.processor.model;
 
 import java.beans.Introspector;
+import java.util.List;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -31,7 +33,7 @@ public enum BeanMethod {
     }
 
     @Override
-    public boolean matches(ExecutableElement method) {
+    public boolean matches(EditorTypes types, ExecutableElement method) {
       if (method.getParameters().size() > 0) {
         return false;
       }
@@ -41,10 +43,7 @@ public enum BeanMethod {
       }
 
       String name = method.getSimpleName().toString();
-      if (name.startsWith(GET_PREFIX) && name.length() > 3) {
-        return true;
-      }
-      return false;
+      return name.startsWith(GET_PREFIX) && name.length() > 3;
     }
 
     /**
@@ -59,16 +58,14 @@ public enum BeanMethod {
         if (name.startsWith(IS_PREFIX) && name.length() > 2) {
           return true;
         }
-        if (name.startsWith(HAS_PREFIX) && name.length() > 3) {
-          return true;
-        }
+        return name.startsWith(HAS_PREFIX) && name.length() > 3;
       }
       return false;
     }
   },
   SET {
     @Override
-    public boolean matches(ExecutableElement method) {
+    public boolean matches(EditorTypes types, ExecutableElement method) {
       if (method.getReturnType().getKind() != TypeKind.VOID) {
         return false;
       }
@@ -76,33 +73,26 @@ public enum BeanMethod {
         return false;
       }
       String name = method.getSimpleName().toString();
-      if (name.startsWith(SET_PREFIX) && name.length() > 3) {
-        return true;
-      }
-      return false;
+      return name.startsWith(SET_PREFIX) && name.length() > 3;
     }
   },
   SET_BUILDER {
     @Override
-    public boolean matches(ExecutableElement method) {
-      TypeMirror returnClass = method.getReturnType();
-      if (returnClass == null || !returnClass.equals(method.getEnclosingElement())) { // TODO HACK
+    public boolean matches(EditorTypes types, ExecutableElement method) {
+      if (!isReturnTypeEnclosingElement(types, method)) {
         return false;
       }
       if (method.getParameters().size() != 1) {
         return false;
       }
       String name = method.getSimpleName().toString();
-      if (name.startsWith(SET_PREFIX) && name.length() > 3) {
-        return true;
-      }
-      return false;
+      return name.startsWith(SET_PREFIX) && name.length() > 3;
     }
   },
   CALL {
     /** Matches all leftover methods. */
     @Override
-    public boolean matches(ExecutableElement method) {
+    public boolean matches(EditorTypes types, ExecutableElement method) {
       return true;
     }
   };
@@ -113,9 +103,9 @@ public enum BeanMethod {
   private static final String SET_PREFIX = "set";
 
   /** Determine which Action a method maps to. */
-  public static BeanMethod which(ExecutableElement method) {
+  public static BeanMethod which(EditorTypes types, ExecutableElement method) {
     for (BeanMethod action : BeanMethod.values()) {
-      if (action.matches(method)) {
+      if (action.matches(types, method)) {
         return action;
       }
     }
@@ -131,6 +121,63 @@ public enum BeanMethod {
     return Introspector.decapitalize(method.getSimpleName().toString().substring(3));
   }
 
+  private static boolean isReturnTypeEnclosingElement(EditorTypes types, ExecutableElement method) {
+    TypeMirror returnTypeMirror = method.getReturnType();
+    if (returnTypeMirror == null || returnTypeMirror.toString().equals("void")) {
+      return false;
+    }
+    TypeMirror matchingReturnTM = null;
+    if (types
+        .getTypes()
+        .erasure(returnTypeMirror)
+        .equals(types.getTypes().erasure(method.getEnclosingElement().asType()))) {
+      matchingReturnTM = method.getEnclosingElement().asType();
+    } else {
+      List<? extends TypeMirror> directSupertypes =
+          types.getTypes().directSupertypes(method.getEnclosingElement().asType());
+      for (TypeMirror superType : directSupertypes) {
+        if (types
+            .getTypes()
+            .erasure(returnTypeMirror)
+            .equals(types.getTypes().erasure(superType))) {
+          matchingReturnTM = superType;
+          break;
+        }
+      }
+    }
+    if (matchingReturnTM == null) {
+      return false;
+    }
+    return deepCompare(types, returnTypeMirror, matchingReturnTM);
+  }
+
+  private static boolean deepCompare(EditorTypes types, TypeMirror source, TypeMirror target) {
+    if (!types.getTypes().erasure(source).equals(types.getTypes().erasure(target))) {
+      return false;
+    }
+    List<? extends TypeMirror> sourceTypeArguments = ((DeclaredType) source).getTypeArguments();
+    List<? extends TypeMirror> targetTypeArguments = ((DeclaredType) target).getTypeArguments();
+    if (sourceTypeArguments.size() != targetTypeArguments.size()) {
+      return false;
+    }
+    for (int i = 0; i < sourceTypeArguments.size(); i++) {
+      if (TypeKind.DECLARED == sourceTypeArguments.get(i).getKind()
+          && TypeKind.DECLARED == targetTypeArguments.get(i).getKind()) {
+        if (!deepCompare(types, sourceTypeArguments.get(i), targetTypeArguments.get(i))) {
+          return false;
+        }
+      } else {
+        if (!types
+            .getTypes()
+            .erasure(sourceTypeArguments.get(i))
+            .equals(types.getTypes().erasure(targetTypeArguments.get(i)))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   /** Returns {@code true} if the BeanLikeMethod matches the method. */
-  public abstract boolean matches(ExecutableElement method);
+  public abstract boolean matches(EditorTypes types, ExecutableElement method);
 }
